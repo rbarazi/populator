@@ -3,7 +3,7 @@ module Populator
   class Record
     attr_accessor :attributes
     
-    # Creates a new instance of Record. Some attributes are set by default:
+    # Creates a new instance of Record from the provided hash. Some attributes are set by default:
     #
     # * <tt>id</tt> - defaults to id passed
     # * <tt>created_at</tt> - defaults to current time
@@ -11,8 +11,8 @@ module Populator
     # * <tt>created_on</tt> - defaults to current date
     # * <tt>updated_on</tt> - defaults to current date
     # * <tt>type</tt> - defaults to class name (for STI)
-    def initialize(model_class, id)
-      @attributes = { model_class.primary_key.to_sym => id }
+    def initialize(record_hash, model_class, id)
+      @attributes = record_hash.merge(model_class.primary_key.to_sym => id)
       @columns = model_class.column_names
       @columns.each do |column|
         case column

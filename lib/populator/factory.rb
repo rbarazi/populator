@@ -38,17 +38,17 @@ module Populator
     end
     
     # Entry method for building records. Delegates to build_records after remember_depth.
-    def populate(amount, options = {}, &block)
+    def populate(records, options = {}, &block)
       self.class.remember_depth do
-        build_records(Populator.interpret_value(amount), options[:per_query] || DEFAULT_RECORDS_PER_QUERY, &block)
+        build_records(records, options[:per_query] || DEFAULT_RECORDS_PER_QUERY, &block)
       end
     end
     
     # Builds multiple Populator::Record instances and calls save_records them when
     # :per_query limit option is reached.
-    def build_records(amount, per_query, &block)
-      amount.times do
-        record = Record.new(@model_class, last_id_in_database + @records.size + 1)
+    def build_records(records, per_query, &block)
+      records.each do |record|
+        record = Record.new(record, @model_class, last_id_in_database + @records.size + 1)
         @records << record
         block.call(record) if block
         save_records if @records.size >= per_query
